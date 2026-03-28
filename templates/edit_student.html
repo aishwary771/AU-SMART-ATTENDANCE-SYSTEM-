@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Student</title>
+
+<style>
+body {
+    font-family:'Segoe UI';
+    background: linear-gradient(135deg,#43e97b,#38f9d7);
+    color:white;
+}
+
+.container {
+    width:350px;
+    margin:100px auto;
+    padding:30px;
+    border-radius:20px;
+    background: rgba(255,255,255,0.1);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>Edit Student</h2>
+
+<form method="POST">
+<input type="text" name="name" value="{{ student.name }}">
+<input type="text" name="roll" value="{{ student.roll }}">
+<input type="text" name="phone" value="{{ student.phone }}">
+
+<button>Update</button>
+</form>
+
+<a href="/admin">Back</a>
+</div>
+
+</body>
+</html>

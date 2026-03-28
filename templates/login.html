@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login | Smart Attendance</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Glass Card */
+.login-container {
+    width: 350px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    text-align: center;
+    color: white;
+}
+
+/* Title */
+.login-container h2 {
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Inputs */
+.input-box {
+    width: 100%;
+    margin: 15px 0;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 14px;
+}
+
+.input-box input::placeholder {
+    color: #eee;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff7eb3, #ff758c);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Error Message */
+.error {
+    margin-top: 10px;
+    color: #ffcccc;
+    font-size: 14px;
+}
+body {
+    animation: gradientMove 6s infinite alternate;
+}
+
+@keyframes gradientMove {
+    0% { background: linear-gradient(135deg, #667eea, #764ba2); }
+    100% { background: linear-gradient(135deg, #ff758c, #ff7eb3); }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login-container">
+    <h2>Smart Attendance</h2>
+
+    <form method="POST">
+        <div class="input-box">
+            <input type="text" name="username" placeholder="Username" required>
+        </div>
+
+        <div class="input-box">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+
+        <button type="submit">Login</button>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+    </form>
+</div>
+
+</body>
+</html>

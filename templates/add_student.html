@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Student</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+body {
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    font-family: Arial;
+}
+
+.container {
+    width: 400px;
+    margin: 80px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.btn {
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ADD BUTTON */
+.add-btn {
+    background: linear-gradient(135deg,#00c9ff,#92fe9d);
+}
+
+/* BACK BUTTON */
+.back-btn {
+    background: linear-gradient(135deg,#ff9966,#ff5e62);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>➕ Add New Student</h2>
+
+<form method="POST">
+<input type="text" name="name" placeholder="Enter Name" required>
+<input type="text" name="roll" placeholder="Enter Roll Number" required>
+<input type="text" name="phone" placeholder="Enter Phone Number" required>
+
+<button class="btn add-btn">Add Student</button>
+</form>
+
+<br>
+
+<a class="btn back-btn" href="/dashboard">⬅ Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

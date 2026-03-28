@@ -1,0 +1,230 @@
+{
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  },
+  "description": "Barry the Barista-Bot",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "next": "send_and_reply_1",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage",
+          "conditions": [],
+          "id": ""
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "event": "incomingParent",
+          "conditions": [],
+          "id": ""
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 20,
+          "y": -170
+        }
+      }
+    },
+    {
+      "name": "send_and_reply_1",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "split_order",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "send_and_reply_2",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -20,
+          "y": -20
+        },
+        "from": "{{flow.channel.address}}",
+        "body": "Welcome to our automated ordering system. Please reply with one of the following: latte, cappuccino, americano, cortado, or cold brew.",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "send_and_reply_2",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "split_order",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 190,
+          "y": 230
+        },
+        "from": "{{flow.channel.address}}",
+        "body": "Seems like you might really need that caffeine after all! We're here to help. Enter your order and we'll start brewing your coffee right away. Options include latte, cappuccino, americano, cortado, or cold brew.",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "split_order",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "send_and_reply_connecting",
+          "event": "noMatch"
+        },
+        {
+          "next": "http_1",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "latte, cappuccino, americano, cortado, cold brew",
+              "arguments": [
+                "{{widgets.send_and_reply_1.inbound.Body}}"
+              ],
+              "type": "matches_any_of",
+              "value": "latte, cappuccino, americano, cortado, cold brew"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.send_and_reply_1.inbound.Body}}",
+        "offset": {
+          "x": -420,
+          "y": 300
+        }
+      }
+    },
+    {
+      "name": "send_and_reply_connecting",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "split_confirm",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -590,
+          "y": 580
+        },
+        "from": "{{flow.channel.address}}",
+        "body": "We want to make sure you get your coffee, even if we're not quite sure how you take it. We'll connect you to a barista directly - is now a good time to call?",
+        "timeout": "180"
+      }
+    },
+    {
+      "name": "split_confirm",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "call_barista",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "y, yes",
+              "arguments": [
+                "{{widgets.send_and_reply_connecting.inbound.Body}}"
+              ],
+              "type": "matches_any_of",
+              "value": "y, yes"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.send_and_reply_connecting.inbound.Body}}",
+        "offset": {
+          "x": -770,
+          "y": 860
+        }
+      }
+    },
+    {
+      "name": "call_barista",
+      "type": "make-outgoing-call-v1",
+      "transitions": [
+        {
+          "event": "answered"
+        },
+        {
+          "event": "answeredByMachine"
+        },
+        {
+          "event": "busy"
+        },
+        {
+          "event": "noAnswer"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -830,
+          "y": 1120
+        },
+        "record": false,
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}"
+      }
+    },
+    {
+      "name": "http_1",
+      "type": "make-http-request",
+      "transitions": [
+        {
+          "event": "success"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 200,
+          "y": 520
+        },
+        "method": "POST",
+        "add_twilio_auth": false,
+        "url": "http://localhost:3000/{{widgets.send_and_reply_1.inbound.Body}}",
+        "timeout": 3600
+      }
+    }
+  ]
+}

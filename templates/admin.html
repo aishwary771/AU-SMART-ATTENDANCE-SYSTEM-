@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+body {
+    background: linear-gradient(135deg,#ff6a00,#ee0979,#00c9ff,#92fe9d);
+    background-size: 300% 300%;
+    animation: move 6s infinite alternate;
+}
+
+@keyframes move {
+    0% {background-position: left;}
+    100% {background-position: right;}
+}
+
+.container {
+    text-align: center;
+}
+
+/* BUTTON STYLE */
+.btn {
+    padding: 8px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+    margin: 5px;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    background: linear-gradient(135deg,#ff0000,#ff6a6a);
+}
+
+/* BACK BUTTON */
+.back-btn {
+    background: linear-gradient(135deg,#00c9ff,#92fe9d);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🔐 Admin Control Panel</h1>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Roll</th>
+<th>Phone</th>
+<th>Action</th>
+</tr>
+
+{% for s in students %}
+<tr>
+<td>{{ s.name }}</td>
+<td>{{ s.roll }}</td>
+<td>{{ s.phone }}</td>
+<td>
+<a class="btn delete-btn" href="/delete_student/{{ s.id }}">Delete</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+
+<a class="btn back-btn" href="/dashboard">⬅ Back</a>
+
+</div>
+
+</body>
+</html>

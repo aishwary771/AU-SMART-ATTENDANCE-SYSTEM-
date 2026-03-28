@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+    margin:0;
+    font-family:'Segoe UI';
+    background: linear-gradient(135deg,#ff9a9e,#fad0c4,#a18cd1);
+    color:white;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:40px auto;
+    padding:30px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    border-radius:20px;
+    text-align:center;
+}
+
+.stats{
+    margin-top:20px;
+}
+
+.stats h2{
+    margin:10px;
+}
+
+.buttons{
+    margin-top:30px;
+}
+
+.buttons a{
+    display:inline-block;
+    margin:10px;
+    padding:12px 18px;
+    background: linear-gradient(135deg,#ff758c,#ff7eb3);
+    border-radius:10px;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.buttons a:hover{
+    transform:scale(1.05);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Dashboard</h1>
+
+<div class="stats">
+
+<h2>Total Students : {{ students }}</h2>
+
+<h2>Present : {{ present }}</h2>
+
+<h2>Absent : {{ absent }}</h2>
+
+</div>
+
+<div class="buttons">
+
+<a href="/add_student">Add Student</a>
+
+<a href="/attendance">Take Attendance</a>
+
+<a href="/manage_students">Manage Students</a>
+
+<a href="/records">Records</a>
+
+<a href="/logout">Logout</a>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Attendance System</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand text-white">Smart Attendance</a>
+
+    <div>
+      <a href="/dashboard" class="btn btn-light btn-sm">Dashboard</a>
+      <a href="/attendance" class="btn btn-light btn-sm">Attendance</a>
+      <a href="/records" class="btn btn-light btn-sm">Records</a>
+      <a href="/export" class="btn btn-success btn-sm">Export</a>
+      <a href="/" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+  </div>
+</nav>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+
+<div class="container">
+
+<a class="navbar-brand" href="/dashboard">Dashboard</a>
+
+<a class="btn btn-light" href="/add_student">Add Student</a>
+
+<a class="btn btn-light" href="/attendance">Attendance</a>
+
+<a class="btn btn-light" href="/records">Records</a>
+
+<a class="btn btn-light" href="/export">Export Excel</a>
+
+<a class="btn btn-danger" href="/logout">Logout</a>
+
+</div>
+
+</nav>
+
+<div class="container mt-4">
+
+{% block content %}
+
+{% endblock %}
+
+</div>
+
+</body>
+</html>
