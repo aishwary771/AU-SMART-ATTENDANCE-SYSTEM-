@@ -2,9 +2,11 @@ from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 from datetime import date
 import pandas as pd
+import os
+from io import BytesIO
 
 app = Flask(__name__)
-app.secret_key = "secret_key_123"
+app.secret_key = os.environ.get("SECRET_KEY", "fallback_secret")
 
 
 # ---------------- DATABASE ----------------
@@ -17,7 +19,6 @@ def get_db():
 # ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -40,42 +41,33 @@ def login():
 # ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
-
     if "user" not in session:
         return redirect("/")
 
     with get_db() as db:
-
-        # Total students
         students = db.execute("SELECT COUNT(*) FROM students").fetchone()[0]
 
-        # Present students (today)
         today = str(date.today())
         present = db.execute(
             "SELECT COUNT(*) FROM attendance WHERE status='Present' AND date=?",
             (today,)
         ).fetchone()[0]
 
-        # Absent students
         absent = students - present
 
-    return render_template(
-        "dashboard.html",
-        students=students,
-        present=present,
-        absent=absent
-    )
+    return render_template("dashboard.html",
+                           students=students,
+                           present=present,
+                           absent=absent)
 
 
 # ---------------- ADD STUDENT ----------------
 @app.route("/add_student", methods=["GET", "POST"])
 def add_student():
-
     if "user" not in session:
         return redirect("/")
 
     with get_db() as db:
-
         if request.method == "POST":
             name = request.form.get("name")
             roll = request.form.get("roll")
@@ -96,29 +88,32 @@ def add_student():
 # ---------------- ATTENDANCE ----------------
 @app.route("/attendance", methods=["GET", "POST"])
 def attendance():
-
     if "user" not in session:
         return redirect("/")
 
     with get_db() as db:
-
         students = db.execute("SELECT * FROM students").fetchall()
 
         if request.method == "POST":
-
             today = str(date.today())
 
             for s in students:
                 status = request.form.get(str(s["id"]))
 
                 if status:
-                    db.execute(
-                        "INSERT INTO attendance(student_id, status, date) VALUES (?, ?, ?)",
-                        (s["id"], status, today)
-                    )
+                    # prevent duplicate entry
+                    existing = db.execute(
+                        "SELECT * FROM attendance WHERE student_id=? AND date=?",
+                        (s["id"], today)
+                    ).fetchone()
+
+                    if not existing:
+                        db.execute(
+                            "INSERT INTO attendance(student_id, status, date) VALUES (?, ?, ?)",
+                            (s["id"], status, today)
+                        )
 
             db.commit()
-
             return redirect("/records")
 
     return render_template("attendance.html", students=students)
@@ -127,7 +122,6 @@ def attendance():
 # ---------------- MANAGE STUDENTS ----------------
 @app.route("/manage_students")
 def manage_students():
-
     if "user" not in session:
         return redirect("/")
 
@@ -140,14 +134,12 @@ def manage_students():
 # ---------------- RECORDS ----------------
 @app.route("/records")
 def records():
-
     if "user" not in session:
         return redirect("/")
 
     selected_date = request.args.get("date")
 
     with get_db() as db:
-
         if selected_date:
             records = db.execute("""
                 SELECT students.name, attendance.status, attendance.date
@@ -156,7 +148,6 @@ def records():
                 WHERE attendance.date=?
                 ORDER BY attendance.date DESC
             """, (selected_date,)).fetchall()
-
         else:
             records = db.execute("""
                 SELECT students.name, attendance.status, attendance.date
@@ -171,7 +162,6 @@ def records():
 # ---------------- EXPORT EXCEL ----------------
 @app.route("/export")
 def export():
-
     if "user" not in session:
         return redirect("/")
 
@@ -184,16 +174,19 @@ def export():
 
     df = pd.DataFrame([dict(row) for row in data])
 
-    file = "attendance.xlsx"
-    df.to_excel(file, index=False)
+    # create file in memory
+    output = BytesIO()
+    df.to_excel(output, index=False)
+    output.seek(0)
 
-    return send_file(file, as_attachment=True)
+    return send_file(output,
+                     download_name="attendance.xlsx",
+                     as_attachment=True)
 
 
 # ---------------- ADMIN PANEL ----------------
 @app.route("/control-panel-987")
 def admin():
-
     if "user" not in session:
         return redirect("/")
 
@@ -209,7 +202,6 @@ def admin():
 # ---------------- DELETE STUDENT ----------------
 @app.route("/delete_student/<int:id>")
 def delete_student(id):
-
     if "user" not in session:
         return redirect("/")
 
@@ -227,7 +219,6 @@ def logout():
     session.clear()
     return redirect("/")
 
-
-# ---------------- RUN ----------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
